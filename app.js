@@ -4,7 +4,7 @@ var app = express();
 var request = require('request');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
-
+require('./db.js')
 app.use(express.logger());
 
 app.use(bodyParser.json()); // support json encoded bodies
@@ -16,8 +16,33 @@ var db = mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  // we're connected!
-  console.log('were connected!');
+    // we're connected!
+    // var kittySchema = mongoose.Schema({
+    //     name: String,
+    //     color: String
+    // });
+    // console.log('we are connected!');
+    // kittySchema.methods.speak = function () {
+    //     var greeting = this.name
+    //     ? "Meow name is " + this.name
+    //     : "I don't have a name";
+    //     console.log(greeting);
+    // }
+    // var Kitten = mongoose.model('Kitten', kittySchema);
+    // var silence = new Kitten({ name: 'Silence', color:'black' });
+    // console.log(silence.name); // 'Silence'
+    // console.log(silence.color); // 'Silence'
+    // var fluffy = new Kitten({ name: 'fluffy' });
+    // fluffy.speak(); // "Meow name is fluffy"
+    // fluffy.save(function (err, fluffy) {
+    //     if (err) return console.error(err);
+    //     fluffy.speak();
+    // });
+    // Kitten.find(function (err, kittens) {
+    // if (err) return console.error(err);
+    //     console.log(kittens);
+    // })
+    // Kitten.find({ name: /^Fluff/ }, callback);
 });
 
 // Configuration
