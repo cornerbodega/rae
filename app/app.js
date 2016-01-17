@@ -12,6 +12,7 @@ angular.module('myApp', [
     'ui.bootstrap',
     'uiGmapgoogle-maps',
     'lumx',
+    'firebase',
 ])
 
 .config(function($routeProvider) {

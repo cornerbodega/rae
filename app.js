@@ -4,6 +4,7 @@ var app = express();
 var request = require('request');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
+
 require('./db.js')
 app.use(express.logger());
 
@@ -11,39 +12,6 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-var db = mongoose.connect('mongodb://localhost/test');
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-    // we're connected!
-    // var kittySchema = mongoose.Schema({
-    //     name: String,
-    //     color: String
-    // });
-    // console.log('we are connected!');
-    // kittySchema.methods.speak = function () {
-    //     var greeting = this.name
-    //     ? "Meow name is " + this.name
-    //     : "I don't have a name";
-    //     console.log(greeting);
-    // }
-    // var Kitten = mongoose.model('Kitten', kittySchema);
-    // var silence = new Kitten({ name: 'Silence', color:'black' });
-    // console.log(silence.name); // 'Silence'
-    // console.log(silence.color); // 'Silence'
-    // var fluffy = new Kitten({ name: 'fluffy' });
-    // fluffy.speak(); // "Meow name is fluffy"
-    // fluffy.save(function (err, fluffy) {
-    //     if (err) return console.error(err);
-    //     fluffy.speak();
-    // });
-    // Kitten.find(function (err, kittens) {
-    // if (err) return console.error(err);
-    //     console.log(kittens);
-    // })
-    // Kitten.find({ name: /^Fluff/ }, callback);
-});
 
 // Configuration
 
@@ -82,23 +50,50 @@ app.post('/potnetApi/signIn', function(req, res) {
     // if it matches, respond with {success:1} else {success:0}
 })
 
-app.post('/potnetApi/signUp', function(req, res) {
+// app.post('/potnetApi/createUser', function(req, res) {
+//     var body = req.body
+//     console.log('Save User!');
+//     console.log(body);
+//     var userSchema = new mongoose.Schema({ username: 'string', password: 'string', ubi: 'string' });
+//     var User = mongoose.model('User', userSchema);
+//     User.find(body).exec(function(w){
+//         console.log(w);
+//         console.log('UserExists!!!!!');
+//         return res.send('UserExists!!!!!')
+//
+//     })
+//     User.create(body, function (err, user) {
+//         if (err) return handleError(err);
+//         console.log('// saved! ' + user )
+//     })
+// })
+app.post('/potnetApi/lcbLogin', function(req, res) {
     console.log(req.body);
-    // check username/ubi to make sure it's not in the db
-    // try to log in to wslcb with provided info
-    // if error, return it
-    // if success, return it
-    // profit
-    // request({
-    //     url: "https://wslcb.mjtraceability.com/serverjson.asp",
-    //     method: "POST",
-    //     json: true,   // <--Very important!!!
-    //     body: req.body
-    // }, function (error, response, body){
-    //     res.send(body);
-    // });
+    var loginReq = {
+        API: "4.0",
+        action: 'login',
+        username: req.body.username,
+        password: req.body.password,
+        license_number: req.body.ubi
+    }
+    lcbRequest(loginReq, function(loginRes){
+        res.send(loginRes)
+    } )
+    // console.log(loginReq,);
+
 })
 
+function lcbRequest(myReq, cb){
+    request({
+        url: "https://wslcb.mjtraceability.com/serverjson.asp",
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: myReq
+    }, function (error, response, body){
+        cb(body);
+        // next(body)
+    });
+}
 // default to this list
 // try today in 011216 mmddyy format
 // work backwards 30 days until you find a file

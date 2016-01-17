@@ -7,34 +7,48 @@
     ]);
 
     function ConnectService($http, $location, Data) {
-        function signIn(req, f, s){
+        // function createUser(userData, f, s){
+        //     return $http({
+        //         method: 'POST',
+        //         // url: 'php/action.php',
+        //         url: 'potnetApi/createUser',
+        //         data: userData,
+        //         datatype: 'json',
+        //     }).success(function (res) {
+        //         console.log(res);
+        //         if (res.success !=1) return f(res)
+        //         return s(res)
+        //     })
+        // }
+        // function signIn(req, f, s){
+        //     console.log(req);
+        //
+        //     return $http({
+        //         method: 'POST',
+        //         // url: 'php/action.php',
+        //         url: 'potnetApi/signIn',
+        //         data: req,
+        //         datatype: 'json',
+        //     }).success(function (res) {
+        //         // if account found and password correct,
+        //         // try to log in to wslcb with ubi from db(f, s)
+        //         // respond/die if no ubi (no account) or bad info (unable to log in to wslcb)
+        //         // s(), else, f()
+        //         console.log(res);
+        //     })
+        // }
+        function lcbLogin(req, f, s){
             console.log(req);
+            return $http({
+                method: 'POST',
+                url: 'potnetApi/lcbLogin',
+                data: req,
+                datatype: 'json',
+            }).success(function (res) {
+                console.log(res);
+                if (res.success !=1) return f(res)
+                return s(res)
 
-            return $http({
-                method: 'POST',
-                // url: 'php/action.php',
-                url: 'potnetApi/signIn',
-                data: req,
-                datatype: 'json',
-            }).success(function (res) {
-                // if account found and password correct,
-                // try to log in to wslcb with ubi from db(f, s)
-                // respond/die if no ubi (no account) or bad info (unable to log in to wslcb)
-                // s(), else, f()
-                console.log(res);
-            })
-        }
-        function signUp(req, f, s){
-            console.log(req);
-            return $http({
-                method: 'POST',
-                url: 'potnetApi/signUp',
-                data: req,
-                datatype: 'json',
-            }).success(function (res) {
-                console.log(res);
-                // if successfully created account,
-                // s(), else, f()
             })
         }
         // function loadLicenses() {
@@ -206,8 +220,9 @@
             getFromBrsPos: getFromBrsPos,
             // getDemoData: getDemoData,
             post: post,
-            signIn: signIn,
-            signUp: signUp,
+            // signIn: signIn,
+            lcbLogin: lcbLogin,
+            // createUser: createUser,
             // saveForDemo: saveForDemo
         }
     }

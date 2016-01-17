@@ -1,36 +1,70 @@
 (function(){
   angular
     .module('myApp')
-    .controller('LandingController', ['$location', 'ConnectService',
+    .controller('LandingController', ['$location', 'ConnectService', 'Fire',
       LandingController
     ]);
 
-  function LandingController($location, ConnectService) {
+  function LandingController($location, ConnectService, Fire) {
     var vm = this;
     var formData = {}
+    var dummy = {username:'luchinisupercritical@gmail.com', password:'44Million!', ubi:'603347225'}
+    var accounts = Fire.accounts
     vm.signIn = function () {
+        //are you registered with potnet? ie. do i have a ubi?
+        //can you lcblog in with data you've provided?
+        // if (!Fire.usernameExists(dummy.username)) return
+        var ubi = ''
+        console.log(accounts);
+        // for(var key in accounts) {
+        //     if(accounts.hasOwnProperty(key)) {
+        //         if(accounts[key] === dummy.username) {
+        //             console.log('dummy un found');
+        //             ubi = accounts[ubi]
+        //         }
+        //     }
+        // }
 
-        // firebase Account sign in
-        // -> then lcb login with stored info.
-        // -> if it doesn't work, deny access.
+        if (ubi.length === 0) return vm.error = "Accountname not found."
+        dummy.ubi = ubi
+        ConnectService.lcbLogin(dummy, signUpLoginFail, function(loginRes){
+            if(loginRes.success !=1) signUpLoginFail()
+            console.log('Logged In successfully!');
+            $location.path('/market')
+        })
 
-        // var potnetdb = ref.child('potnet')
-        // potnetdb.set({testkey1: 3, testkey2: 4})
-        // // $firebaseObject(ref)
-        // console.log(ref);
-        // ConnectService.signIn({username: vm.username, password: vm.password}, signInFail, signInSucceed)
     }
     vm.signUp = function () {
-        // check if if ubi/un exists in users
+        ConnectService.lcbLogin(dummy, signUpLoginFail, function(loginRes){
+            if(loginRes.success !=1) signUpLoginFail(loginRes)
+            console.log('Logged In successfully!');
+
+            //todolater console.log('check if ubi already in potnet db');
+            if(!!Fire.ubiExists(dummy)) {
+                return vm.error = 'UBI already registered with Potnet'
+            }
+            Fire.addAccount(dummy, function(key){
+                console.log('success! ! account added');
+                $location.path('/market')
+            })
+
+
+
+        })
+        // ConnectService.signUp(vm.formData, signUpFail, signInSucceed)
+        // check if if ubi/un exists in accounts
         // if new, try to log in at wsclb with info
         // if successful, create firebase ACCOUNT with username password ->
             // associated with email password ubi
-        // user wbat log in to potnet with username password. do this automatically.
+        // account wbat log in to potnet with username password. do this automatically.
 
         // ConnectService.signUp({username: vm.username, password: vm.password, license: vm.ubi}, signUpFail, signUpSucceed)
     }
-    function signUpFail(res) {
-        console.log('Sign Up Failed ' + res);
+    function createAccountFail(res) {
+        console.log(res.error);
+    }
+    function signUpLoginFail(res) {
+        console.log('Sign Up Failed!! ' + res.error);
     }
     function signInFail(res) {
         console.log('Sign In Failed ' + res);

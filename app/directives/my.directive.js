@@ -98,7 +98,7 @@
                 var path = $location.path().slice(1);
                 // $scope.title = path.charAt(0).toUpperCase() + path.slice(1);
                 $scope.title  = path.split('/')
-                if($location.path() != '/login') $scope.email = JSON.parse(sessionStorage.user).email
+                // if($location.path() != '/login') $scope.email = JSON.parse(sessionStorage.user).email
                 $scope.gotoHelp = function() {
                     $location.path('/traceability/help')
                 }
